@@ -115,7 +115,7 @@ add_line /boot/config.txt "dtoverlay=pi3-disable-wifi"
 
 # disable bluetooth
 echo "Disabling bluetooth ..."
-add_line /boot/config.txt "dtoberlay=pi3-disable-bt"
+add_line /boot/config.txt "dtoverlay=pi3-disable-bt"
 
 echo ""
 echo "Done. Please reboot."
