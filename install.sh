@@ -71,6 +71,7 @@ echo "- set static IP address $IP"
 echo "- change hostname from $HOSTNAME to $NEWHOSTNAME"
 echo "- enable SSH access"
 echo "- enable camera"
+echo "- disable camera LED"
 echo "- disable WiFi"
 echo "- disable bluetooth"
 PROMPT="Continue? [y/N] "
@@ -103,9 +104,13 @@ echo "Enabling SSH ..."
 sudo systemctl enable ssh
 sudo systemctl start ssh
 
-# enable piCam
+# enable camera
 echo "Enabling camera ..."
 raspi-config nonint do_camera 0
+
+# disable camera LED
+echo  "Disabling camera LED ..."
+add_line /boot/config.txt "disable_camera_led=1"
 
 # disable WiFi
 echo "Disabling WiFi ..."
