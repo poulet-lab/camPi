@@ -98,7 +98,7 @@ echo "# dhcpcd.conf" > "$DHCPCD"
 echo "# Written by dimPi" >> "$DHCPCD"
 echo "# Original file backed up to $DHCPCD.bak" >> "$DHCPCD"
 echo "interface eth0" >> "$DHCPCD"
-echo "static ip_address	$IP/24" >> "$DHCPCD"
+echo "static ip_address=$IP/24" >> "$DHCPCD"
 
 # set hostname
 echo "Updating hostname ..."
