@@ -65,13 +65,6 @@ while ! valid_ip $USERINPUT; do
 done
 IP=$USERINPUT
 
-# Enable SSH
-if ! `systemctl list-units --full -all | grep -Fq "ssh.service"`; then
-	echo "Enabling SSH ..."
-	sudo systemctl enable ssh
-fi
-sudo systemctl start ssh
-
 echo ""
 echo "You are about to apply the following changes to this system:"
 echo "- set static IP address $IP"
@@ -104,6 +97,11 @@ echo "static ip_address=$IP/24" >> "$DHCPCD"
 echo "Updating hostname ..."
 sed -i "s/$HOSTNAME/$NEWHOSTNAME/" /etc/hosts
 hostnamectl set-hostname $NEWHOSTNAME
+
+# Enable SSH
+echo "Enabling SSH ..."
+sudo systemctl enable ssh
+sudo systemctl start ssh
 
 # enable piCam
 echo "Enabling camera ..."
