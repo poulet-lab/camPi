@@ -1,0 +1,14 @@
+[Unit]
+Description=camPi
+After=network-target network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/home/pi/camPi/camPi.sh
+ExecStop=/usr/bin/killall omxplayer
+RemainAfterExit=yes
+User=pi
+Type=idle
+
+[Install]
+WantedBy=multi-user.target
