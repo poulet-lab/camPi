@@ -84,6 +84,3 @@ done
 # Wait for CTRL+C
 trap '{ killall -q screen; echo ""; exit 1; }' INT
 sleep infinity
-
-
-
