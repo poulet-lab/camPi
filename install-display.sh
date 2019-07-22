@@ -33,100 +33,89 @@ function prompt_user() {
 	USERINPUT=${USERINPUT:-"$DEFAULT"}
 }
 
+# Check for dependencies
+DEPENDENCIES='omxplayer sshpass'
+if ! dpkg -s $DEPENDENCIES >/dev/null 2>&1; then
+
+	echo "Installing dependencies ..."
+
+	# Test internet connectivity
+	test=google.com
+	if ! nc -dzw1 $test 443 > /dev/null 2>&1 && echo |openssl s_client -connect $test:443 2>&1 |awk '
+		handshake && $1 == "Verification" { if ($2=="OK") exit; exit 1 }
+		$1 $2 == "SSLhandshake" { handshake = 1 }'
+	then
+		echo "Cannot connect to the internet."
+		exit 1
+	fi
+
+	# Install dependencies
+	apt-get -y install $DEPENDENCIES > /dev/null
+	if [[ $? -ne 0 ]]; then
+		exit 1
+	fi
+fi
 
 
+# Prompt for hostname
+PROMPT="Enter hostname"
+DEFAULT=camPi
+prompt_user
+while [[ ! $USERINPUT =~ ^[a-z0-9-]{1,62}$ || \
+	$USERINPUT =~ ^[-] || $USERINPUT =~ [-]$ ]]; do
+	echo "Invalid hostname."
+	prompt_user
+done
+NEWHOSTNAME=$USERINPUT
 
-# install omxplayer & sshpass
+# Prompt for IP address
+PROMPT="Enter IP address"
+DEFAULT="10.0.0.1"
+prompt_user
+while ! valid_ip $USERINPUT; do
+	echo "Invalid IP address."
+	prompt_user
+done
+IP=$USERINPUT
 
-## Prompt for setup ID
-#PROMPT="Enter setup ID"
-#DEFAULT="0"
-#prompt_user
-#while [[ ! $USERINPUT =~ ^[0-9]{1,2}$ ]]; do
-#	echo "Invalid setup ID. Use a number from 0 to 99."
-#	prompt_user
-#done
-#ID=$USERINPUT
-#printf -v ID "%d" $ID
-#
-## Prompt for hostname
-#PROMPT="Enter hostname"
-#DEFAULT=setup$ID
-#prompt_user
-#while [[ ! $USERINPUT =~ ^[a-z0-9-]{1,62}$ || \
-#	$USERINPUT =~ ^[-] || $USERINPUT =~ [-]$ ]]; do
-#	echo "Invalid hostname."
-#	prompt_user
-#done
-#NEWHOSTNAME=$USERINPUT
-#
-## Prompt for IP address
-#PROMPT="Enter IP address"
-#DEFAULT="10.0.0.1$ID"
-#prompt_user
-#while ! valid_ip $USERINPUT; do
-#	echo "Invalid IP address."
-#	prompt_user
-#done
-#IP=$USERINPUT
-#
-#echo ""
-#echo "You are about to apply the following changes to this system:"
-#echo "- set static IP address $IP"
-#echo "- change hostname from $HOSTNAME to $NEWHOSTNAME"
-#echo "- enable SSH access"
-#echo "- enable camera"
-#echo "- disable camera LED"
-#echo "- disable WiFi"
-#echo "- disable bluetooth"
-#PROMPT="Continue? [y/N] "
-#read -e -p "$PROMPT" USERINPUT
-#if [[ ! $USERINPUT =~ ^y$ ]]; then
-#	echo "Aborting."
-#	exit 1
-#fi
-#echo ""
-#
-## set IP address
-#echo "Setting static IP address ..."
-#DHCPCD="/etc/dhcpcd.conf"
-#if ! `grep -q "Written by dimPi" "$DHCPCD"`; then
-#	cp "$DHCPCD" "$DHCPCD.bak"
-#fi
-#echo "# dhcpcd.conf" > "$DHCPCD"
-#echo "# Written by dimPi" >> "$DHCPCD"
-#echo "# Original file backed up to $DHCPCD.bak" >> "$DHCPCD"
-#echo "interface eth0" >> "$DHCPCD"
-#echo "static ip_address=$IP/24" >> "$DHCPCD"
-#
-## set hostname
-#echo "Updating hostname ..."
-#sed -i "s/$HOSTNAME/$NEWHOSTNAME/" /etc/hosts
-#hostnamectl set-hostname $NEWHOSTNAME
-#
-## Enable SSH
-#echo "Enabling SSH ..."
-#sudo systemctl enable ssh
-#sudo systemctl start ssh
-#
-## enable camera
-#echo "Enabling camera ..."
-#raspi-config nonint do_camera 0
-#
-## disable camera LED
-#echo  "Disabling camera LED ..."
-#add_line /boot/config.txt "disable_camera_led=1"
-#
-## disable WiFi
-#echo "Disabling WiFi ..."
-#add_line /boot/config.txt "dtoverlay=pi3-disable-wifi"
-#
-## disable bluetooth
-#echo "Disabling bluetooth ..."
-#add_line /boot/config.txt "dtoverlay=pi3-disable-bt"
-#
-#echo ""
-#echo "Done. Please reboot."
-#
-#
-#
+echo ""
+echo "You are about to apply the following changes to this system:"
+echo "- set static IP address $IP"
+echo "- change hostname from $HOSTNAME to $NEWHOSTNAME"
+echo "- disable WiFi"
+echo "- disable bluetooth"
+PROMPT="Continue? [y/N] "
+read -e -p "$PROMPT" USERINPUT
+if [[ ! $USERINPUT =~ ^y$ ]]; then
+	echo "Aborting."
+	exit 1
+fi
+echo ""
+
+# set IP address
+echo "Setting static IP address ..."
+DHCPCD="/etc/dhcpcd.conf"
+if ! `grep -q "Written by dimPi" "$DHCPCD"`; then
+	cp "$DHCPCD" "$DHCPCD.bak"
+fi
+echo "# dhcpcd.conf" > "$DHCPCD"
+echo "# Written by dimPi" >> "$DHCPCD"
+echo "# Original file backed up to $DHCPCD.bak" >> "$DHCPCD"
+echo "interface eth0" >> "$DHCPCD"
+echo "static ip_address=$IP/24" >> "$DHCPCD"
+
+# set hostname
+echo "Updating hostname ..."
+sed -i "s/$HOSTNAME/$NEWHOSTNAME/" /etc/hosts
+hostnamectl set-hostname $NEWHOSTNAME
+
+# disable WiFi
+echo "Disabling WiFi ..."
+add_line /boot/config.txt "dtoverlay=pi3-disable-wifi"
+
+# disable bluetooth
+echo "Disabling bluetooth ..."
+add_line /boot/config.txt "dtoverlay=pi3-disable-bt"
+
+echo ""
+echo "Done. Please reboot."
