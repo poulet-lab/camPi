@@ -84,6 +84,7 @@ echo "- set static IP address $IP"
 echo "- change hostname from $HOSTNAME to $NEWHOSTNAME"
 echo "- disable WiFi"
 echo "- disable bluetooth"
+echo "- install camPi"
 PROMPT="Continue? [y/N] "
 read -e -p "$PROMPT" USERINPUT
 if [[ ! $USERINPUT =~ ^y$ ]]; then
