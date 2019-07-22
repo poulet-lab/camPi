@@ -117,5 +117,26 @@ add_line /boot/config.txt "dtoverlay=pi3-disable-wifi"
 echo "Disabling bluetooth ..."
 add_line /boot/config.txt "dtoverlay=pi3-disable-bt"
 
+# Get current directory, define target directory
+BASEDIR=$(cd `dirname $BASH_SOURCE` && pwd)
+TARGETDIR="/opt/camPi/bin"
+mkdir -p "$TARGETDIR"
+
+# Copy camPi.sh to target directory
+cp --no-preserve=owner "$BASEDIR/camPi.sh" "$TARGETDIR"
+echo "Copied camPi.sh to $TARGETDIR."
+
+# Create symlink to camPi
+ln -sf "$TARGETDIR/camPi.sh" "/usr/local/bin/camPi"
+echo "Created symlink /usr/local/bin/camPi → $TARGETDIR/dimPi.sh."
+
+# Copy system.d service
+cp --no-preserve=owner $BASEDIR/camPi.service /etc/systemd/system
+echo "Copied camPi.service to /etc/systemd/system."
+
+# Enable and start dimPi service
+systemctl enable camPi.service
+systemctl start camPi.service
+
 echo ""
 echo "Done. Please reboot."
