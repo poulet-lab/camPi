@@ -55,6 +55,14 @@ for i in "${!IPS[@]}"; do
 	fi
 done
 
+# add IPs to known_hosts
+for IP in "${IPS[@]}"; do
+	if ! ssh-keygen -F $IP &>/dev/null; then
+		echo "Adding $IP to ~/.ssh/known_hosts ..."
+		{ ssh-keyscan -t ecdsa $IP >> ~/.ssh/known_hosts; } &>/dev/null
+	fi
+done
+
 # Killing existing processes
 printf "%s" "Killing existing streams ..."
 killall -q screen
