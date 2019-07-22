@@ -4,7 +4,7 @@ After=network-target network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/local/bin/dimPi
+ExecStart=/usr/local/bin/camPi
 ExecStop=/usr/bin/killall omxplayer
 RemainAfterExit=yes
 Type=idle
