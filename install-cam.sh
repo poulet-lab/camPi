@@ -48,7 +48,7 @@ printf -v ID "%d" $ID
 PROMPT="Enter hostname"
 DEFAULT=setup$ID
 prompt_user
-while [[ ! $USERINPUT =~ ^[a-z0-9-]{1,62}$ || \
+while [[ ! $USERINPUT =~ ^[a-zA-Z0-9-]{1,62}$ || \
 	$USERINPUT =~ ^[-] || $USERINPUT =~ [-]$ ]]; do
 	echo "Invalid hostname."
 	prompt_user
