@@ -61,7 +61,7 @@ fi
 PROMPT="Enter hostname"
 DEFAULT="camPi"
 prompt_user
-while [[ ! $USERINPUT =~ ^[a-z0-9-]{1,62}$ || \
+while [[ ! $USERINPUT =~ ^[a-zA-Z0-9-]{1,62}$ || \
 	$USERINPUT =~ ^[-] || $USERINPUT =~ [-]$ ]]; do
 	echo "Invalid hostname."
 	prompt_user
