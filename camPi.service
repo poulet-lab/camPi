@@ -7,7 +7,6 @@ Wants=network-online.target
 ExecStart=/usr/local/bin/dimPi
 ExecStop=/usr/bin/killall omxplayer
 RemainAfterExit=yes
-User=pi
 Type=idle
 
 [Install]
