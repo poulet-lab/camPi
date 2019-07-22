@@ -84,6 +84,7 @@ echo "- set static IP address $IP"
 echo "- change hostname from $HOSTNAME to $NEWHOSTNAME"
 echo "- disable WiFi"
 echo "- disable bluetooth"
+echo "- disable overscan"
 echo "- install camPi"
 PROMPT="Continue? [y/N] "
 read -e -p "$PROMPT" USERINPUT
@@ -117,6 +118,10 @@ add_line /boot/config.txt "dtoverlay=pi3-disable-wifi"
 # disable bluetooth
 echo "Disabling bluetooth ..."
 add_line /boot/config.txt "dtoverlay=pi3-disable-bt"
+
+# disable WiFi
+echo "Disabling overscan ..."
+add_line /boot/config.txt "disable_overscan=1"
 
 # Get current directory, define target directory
 BASEDIR=$(cd `dirname $BASH_SOURCE` && pwd)
