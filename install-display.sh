@@ -34,7 +34,7 @@ function prompt_user() {
 }
 
 # Check for dependencies
-DEPENDENCIES='omxplayer sshpass'
+DEPENDENCIES='omxplayer sshpass screen'
 if ! dpkg -s $DEPENDENCIES >/dev/null 2>&1; then
 
 	echo "Installing dependencies ..."
