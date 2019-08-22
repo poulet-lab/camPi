@@ -74,7 +74,7 @@ echo " Done"
 
 # Start streams
 PORT=5000
-COMMON="raspivid -t 0 -n -ih -sa -100 -w $((resX/2)) -h $((resY/2)) -l -o tcp://0.0.0.0:$PORT"
+COMMON="raspivid -t 0 -n -ih -sa -100 -ISO 800 -w $((resX/2)) -h $((resY/2)) -l -o tcp://0.0.0.0:$PORT"
 for i in "${!IPS[@]}"; do
 	echo "Starting stream at ${IPS[$i]} (${LABELS[$i]}) ..."
 	sshpass -p$REMOTEPASS ssh $REMOTEUSER@${IPS[$i]} "$COMMON -a '${LABELS[$i]}' &>/dev/null" &
